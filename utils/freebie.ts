@@ -7,7 +7,7 @@ const STORAGE_KEYS = {
   CUSTOMER_ID: 'screenclip_customer_id',
 };
 
-const FREE_LIMIT = 5;
+const FREE_LIMIT = 3;
 
 // Get current month string (YYYY-MM)
 function getCurrentMonth(): string {

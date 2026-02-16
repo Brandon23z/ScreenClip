@@ -72,7 +72,7 @@ export default function Home() {
             </button>
             
             <p className="text-gray-500 mt-4 text-sm">
-              10 free screenshots per month • No credit card required
+              3 free screenshots per month • No credit card required
             </p>
           </div>
         </div>
