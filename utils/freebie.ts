@@ -9,7 +9,7 @@ const STORAGE_KEYS = {
   LAST_VERIFIED: 'screenclip_last_verified',
 };
 
-const FREE_LIMIT = 3;
+export const FREE_LIMIT = 3;
 
 // Get current month string (YYYY-MM)
 function getCurrentMonth(): string {

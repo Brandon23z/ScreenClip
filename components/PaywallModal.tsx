@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FREE_LIMIT } from "../utils/freebie";
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -44,7 +45,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
         <div className="text-center mb-6">
           <div className="text-6xl mb-4">🚀</div>
           <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-            You've used all 3 free exports this month
+            You've used all {FREE_LIMIT} free exports this month
           </h2>
           <p className="text-gray-400">
             Upgrade to Pro for unlimited screenshots and premium features

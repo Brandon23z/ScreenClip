@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import ScreenshotEditor from "@/components/ScreenshotEditor";
-import { markAsPaid } from "@/utils/freebie";
+import { markAsPaid, FREE_LIMIT } from "@/utils/freebie";
 
 export default function Home() {
   const [showEditor, setShowEditor] = useState(false);
@@ -100,7 +100,7 @@ export default function Home() {
             </button>
             
             <p className="text-gray-500 mt-4 text-sm">
-              3 free screenshots per month • No credit card required
+              {FREE_LIMIT} free screenshots per month • No credit card required
             </p>
           </div>
         </div>

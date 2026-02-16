@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FREE_LIMIT } from "../utils/freebie";
 
 interface Template {
   id: string;
@@ -232,7 +233,7 @@ export default function TemplateSelector({
       {/* Free Tier Notice */}
       <div className="mt-6 p-3 bg-gray-900/50 rounded-lg border border-gray-700">
         <p className="text-xs text-gray-400">
-          <span className="text-purple-400 font-semibold">Free Tier:</span> 10 screenshots/month
+          <span className="text-purple-400 font-semibold">Free Tier:</span> {FREE_LIMIT} screenshots/month
           <br />
           <span className="text-gray-500 text-[10px]">Includes "AppShot Free" watermark</span>
         </p>
