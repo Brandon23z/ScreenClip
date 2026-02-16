@@ -197,6 +197,72 @@ export async function applyTemplate(
         // Draw image inside phone with transform
         drawImageInPhone(ctx, image, canvas.width / 2, canvas.height / 2, phoneWidth, phoneHeight, imageTransform, orientation);
       }
+    } else if (template.config.device === "ipad") {
+      // iPad Pro mockup - landscape orientation, using PNG frame
+      const framePath = '/device-frames/ipad-pro-13-landscape-silver.png';
+      const deviceFrame = await loadDeviceFrame(framePath);
+      
+      if (deviceFrame) {
+        const { image: frameImage, template: frameTemplate } = deviceFrame;
+        
+        // Scale factor to make the frame fit nicely on screen
+        const displayScale = 0.35;
+        
+        const canvasWidth = frameTemplate.frameSize.width * displayScale;
+        const canvasHeight = frameTemplate.frameSize.height * displayScale;
+        
+        canvas.width = canvasWidth + padding * 2;
+        canvas.height = canvasHeight + padding * 2;
+        
+        // Draw background
+        drawBackground(ctx, canvas, template);
+        
+        // Calculate screen coordinates
+        const screenX = padding + (frameTemplate.screen.x * displayScale);
+        const screenY = padding + (frameTemplate.screen.y * displayScale);
+        const screenWidth = frameTemplate.screen.width * displayScale;
+        const screenHeight = frameTemplate.screen.height * displayScale;
+        
+        // Store screen dimensions for Fill button
+        template.config._realScreenDimensions = {
+          width: screenWidth,
+          height: screenHeight
+        };
+        
+        // Draw user image in screen area
+        drawImageInDeviceScreen(ctx, image, screenX, screenY, screenWidth, screenHeight, imageTransform, 40);
+        
+        // Draw device frame on top
+        ctx.drawImage(frameImage, padding, padding, canvasWidth, canvasHeight);
+      } else {
+        // Fallback if PNG fails to load
+        const ipadWidth = 1024;
+        const ipadHeight = 768;
+        
+        canvas.width = ipadWidth + padding * 2;
+        canvas.height = ipadHeight + padding * 2;
+        
+        drawBackground(ctx, canvas, template);
+        
+        template.config._realScreenDimensions = {
+          width: ipadWidth,
+          height: ipadHeight
+        };
+        
+        // Simple fallback rendering
+        const x = padding;
+        const y = padding;
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(x, y, ipadWidth, ipadHeight);
+        
+        const baseScale = Math.min(ipadWidth / image.width, ipadHeight / image.height);
+        const scaledWidth = image.width * baseScale * imageTransform.scale;
+        const scaledHeight = image.height * baseScale * imageTransform.scale;
+        const imageX = x + (ipadWidth - scaledWidth) / 2 + imageTransform.x;
+        const imageY = y + (ipadHeight - scaledHeight) / 2 + imageTransform.y;
+        
+        ctx.drawImage(image, imageX, imageY, scaledWidth, scaledHeight);
+      }
     } else if (template.config.device === "macbook") {
       // MacBook Pro mockup - screen is 16:10
       const macbookScreenW = 1280;
@@ -598,6 +664,47 @@ function drawPhoneFrame(
     ctx.fillRect(x + 230, y + height + bezelWidth - 1, 2, 2);
     ctx.fillRect(x + 180, y - bezelWidth - 2, 2, 2);
   }
+}
+
+// Generic function to draw image in device screen with clipping
+function drawImageInDeviceScreen(
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  screenX: number,
+  screenY: number,
+  screenWidth: number,
+  screenHeight: number,
+  transform: ImageTransform,
+  cornerRadius: number = 37
+) {
+  // Create clipping path for screen area with rounded corners
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(screenX, screenY, screenWidth, screenHeight, cornerRadius);
+  ctx.clip();
+  
+  // Fill screen background with WHITE
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
+  
+  // Calculate scaled image dimensions
+  const baseScale = Math.min(screenWidth / image.width, screenHeight / image.height);
+  const finalScale = baseScale * transform.scale;
+  const scaledWidth = image.width * finalScale;
+  const scaledHeight = image.height * finalScale;
+  
+  // Calculate position with transform offset
+  const screenCenterX = screenX + screenWidth / 2;
+  const screenCenterY = screenY + screenHeight / 2;
+  const imageCenterX = screenCenterX + transform.x;
+  const imageCenterY = screenCenterY + transform.y;
+  const imageX = imageCenterX - scaledWidth / 2;
+  const imageY = imageCenterY - scaledHeight / 2;
+  
+  // Draw the image (will be clipped to rounded rectangle)
+  ctx.drawImage(image, imageX, imageY, scaledWidth, scaledHeight);
+  
+  ctx.restore();
 }
 
 // Draw image in real PNG device frame (screen coordinates based)

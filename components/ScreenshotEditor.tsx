@@ -115,6 +115,17 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
     }
   }, [selectedTemplate?.id]);
 
+  // Auto-fill when device template is selected or when image is uploaded with device template active
+  useEffect(() => {
+    if (image && selectedTemplate?.config?.device) {
+      // Delay slightly to ensure canvas is rendered
+      const timer = setTimeout(() => {
+        handleFillImage();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [image, selectedTemplate?.id]);
+
   // Handle Fill button - auto-fill image to device screen (cover, not contain)
   const handleFillImage = () => {
     if (selectedTemplate?.config?.device && image) {
@@ -129,6 +140,9 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
         const orientation = selectedTemplate.config.orientation || "portrait";
         screenWidth = orientation === "portrait" ? 380 : 780;
         screenHeight = orientation === "portrait" ? 780 : 380;
+      } else if (selectedTemplate.config.device === "ipad") {
+        screenWidth = 1024;
+        screenHeight = 768;
       } else if (selectedTemplate.config.device === "macbook") {
         screenWidth = 1280;
         screenHeight = 800;

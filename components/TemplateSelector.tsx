@@ -10,48 +10,54 @@ interface Template {
 }
 
 const templates: Template[] = [
-  // Apple Keynote style gradients - refined and premium with distinct color transitions
+  // Apple-style premium gradients with multi-stop depth
   {
-    id: "gradient-purple",
+    id: "gradient-purple-pink",
     name: "Purple Dream",
     type: "gradient",
-    config: { colors: ["#5b21b6", "#fbb6ce"], angle: 135 } // deep purple → soft pink
+    config: { colors: ["#4c1d95", "#ec4899", "#fce7f3"], angle: 135 } // deep purple → soft pink → white
   },
   {
-    id: "gradient-violet-pink",
-    name: "Violet Blush",
+    id: "gradient-navy-mint",
+    name: "Ocean Breeze",
     type: "gradient",
-    config: { colors: ["#6b21a8", "#f472b6"], angle: 135 } // dark violet → bright pink
+    config: { colors: ["#1e3a8a", "#14b8a6", "#d1fae5"], angle: 120 } // navy blue → teal → mint
   },
   {
-    id: "gradient-sunset-cream",
+    id: "gradient-sunset",
     name: "Sunset Glow",
     type: "gradient",
-    config: { colors: ["#dc2626", "#fbbf24", "#fef3c7"], angle: 120 } // deep red → golden yellow → cream
+    config: { colors: ["#ea580c", "#fdba74", "#fef3c7"], angle: 135 } // orange → peach → cream
   },
   {
-    id: "gradient-soft-lavender",
-    name: "Soft Lavender",
+    id: "gradient-violet-rose",
+    name: "Violet Rose",
     type: "gradient",
-    config: { colors: ["#c084fc", "#7dd3fc"], angle: 135 } // lavender → sky blue
+    config: { colors: ["#581c87", "#db2777", "#fce7f3"], angle: 120 } // dark violet → magenta → light rose
   },
   {
-    id: "gradient-warm-peach",
-    name: "Warm Peach",
+    id: "gradient-forest",
+    name: "Forest Mist",
     type: "gradient",
-    config: { colors: ["#f97316", "#fde68a"], angle: 90 } // deep orange → light yellow
+    config: { colors: ["#14532d", "#10b981", "#d1fae5"], angle: 135 } // forest green → emerald → light sage
   },
   {
-    id: "gradient-royal-purple",
-    name: "Royal Purple",
+    id: "gradient-coral",
+    name: "Coral Dream",
     type: "gradient",
-    config: { colors: ["#7c3aed", "#3b82f6"], angle: 135 } // royal purple → bright blue
+    config: { colors: ["#991b1b", "#fb7185", "#fed7aa"], angle: 120 } // deep red → coral → warm peach
   },
   {
-    id: "gradient-coral-white",
-    name: "Coral Cream",
+    id: "gradient-midnight",
+    name: "Midnight Sky",
     type: "gradient",
-    config: { colors: ["#ef4444", "#fbbf24", "#fefce8"], angle: 120 } // coral red → gold → pale cream
+    config: { colors: ["#1e1b4b", "#7c3aed", "#ddd6fe"], angle: 135 } // midnight blue → purple → lavender
+  },
+  {
+    id: "gradient-gold",
+    name: "Golden Hour",
+    type: "gradient",
+    config: { colors: ["#b45309", "#fbbf24", "#fef3c7"], angle: 120 } // gold → amber → soft yellow
   },
   // Device Mockups
   {
@@ -65,6 +71,12 @@ const templates: Template[] = [
     name: "iPhone Frame",
     type: "device",
     config: { device: "phone", orientation: "portrait" }
+  },
+  {
+    id: "device-ipad",
+    name: "iPad Pro",
+    type: "device",
+    config: { device: "ipad" }
   },
   {
     id: "device-macbook",
@@ -184,6 +196,7 @@ export default function TemplateSelector({
                       <div className="text-2xl">
                         {template.config.device === "browser" && "🌐"}
                         {template.config.device === "phone" && "📱"}
+                        {template.config.device === "ipad" && "📱"}
                         {template.config.device === "macbook" && "💻"}
                       </div>
                       <p className="text-sm font-medium">{template.name}</p>
