@@ -65,7 +65,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
             <span className="text-2xl">✨</span>
             <div>
               <h3 className="font-semibold text-white">No Watermark</h3>
-              <p className="text-sm text-gray-400">Remove "ScreenClip Free" branding</p>
+              <p className="text-sm text-gray-400">Remove "AppShot Free" branding</p>
             </div>
           </div>
           
@@ -95,7 +95,7 @@ export default function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
           disabled={isLoading}
           className="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white py-4 rounded-lg font-bold text-lg hover:from-purple-600 hover:to-pink-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg shadow-purple-500/50"
         >
-          {isLoading ? 'Loading...' : 'Upgrade to Pro — $5/month'}
+          {isLoading ? 'Loading...' : 'Upgrade to AppShot Pro — $5/month'}
         </button>
 
         {/* Close button */}

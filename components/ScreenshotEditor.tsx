@@ -210,7 +210,7 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
 
     // Export the canvas
     if (canvasRef.current) {
-      exportCanvas(canvasRef.current, "screenclip-pro");
+      exportCanvas(canvasRef.current, "appshot-pro");
       
       // Increment usage count for free users
       if (!isPaid) {
@@ -231,7 +231,7 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
             <span>←</span> Back
           </button>
           <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-            ScreenClip Pro
+            AppShot Pro
           </h2>
           <div className="w-20"></div>
         </div>
@@ -256,7 +256,7 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
               <p className="text-xs text-gray-500 mt-2">
                 {isPaid 
                   ? "Adds your text at bottom center • Pro users have no forced watermark" 
-                  : `Adds your text at bottom center • "ScreenClip Free" branding shown at bottom right • ${getRemainingExports()} free exports remaining this month`
+                  : `Adds your text at bottom center • "AppShot Free" branding shown at bottom right • ${getRemainingExports()} free exports remaining this month`
                 }
               </p>
             </div>

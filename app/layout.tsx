@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ScreenClip Pro - Beautiful Screenshot Mockups",
+  title: "AppShot Pro - Beautiful Screenshot Mockups",
   description: "Transform your screenshots into stunning visuals with gradients, device frames, and professional templates.",
 };
 

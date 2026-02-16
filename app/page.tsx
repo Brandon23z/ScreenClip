@@ -18,7 +18,7 @@ export default function Home() {
       window.history.replaceState({}, '', '/');
       
       // Show success message
-      alert('🎉 Welcome to ScreenClip Pro! You now have unlimited exports and no watermark.');
+      alert('🎉 Welcome to AppShot Pro! You now have unlimited exports and no watermark.');
       
       // Reload to update UI
       window.location.reload();
@@ -33,7 +33,7 @@ export default function Home() {
           <div className="text-center max-w-4xl mx-auto">
             <div className="mb-8">
               <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
-                ScreenClip Pro
+                AppShot Pro
               </h1>
               <p className="text-xl md:text-2xl text-gray-300 mb-4">
                 Transform your screenshots into stunning visuals
