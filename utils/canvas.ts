@@ -230,7 +230,7 @@ export async function applyTemplate(
         };
         
         // Draw user image in screen area
-        drawImageInDeviceScreen(ctx, image, screenX, screenY, screenWidth, screenHeight, imageTransform, 40);
+        drawImageInDeviceScreen(ctx, image, screenX, screenY, screenWidth, screenHeight, imageTransform);
         
         // Draw device frame on top
         ctx.drawImage(frameImage, padding, padding, canvasWidth, canvasHeight);
@@ -678,18 +678,17 @@ function drawImageInDeviceScreen(
   screenY: number,
   screenWidth: number,
   screenHeight: number,
-  transform: ImageTransform,
-  cornerRadius: number = 37
+  transform: ImageTransform
 ) {
-  // Fill screen background with WHITE on full rectangle (covers corners so background doesn't bleed through)
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
-
-  // Clip image to rounded corners
+  // Clip to rectangular screen area (the device frame PNG provides the actual rounded corners on top)
   ctx.save();
   ctx.beginPath();
-  ctx.roundRect(screenX, screenY, screenWidth, screenHeight, cornerRadius);
+  ctx.rect(screenX, screenY, screenWidth, screenHeight);
   ctx.clip();
+
+  // Fill screen background with WHITE
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
 
   // Calculate scaled image dimensions
   const baseScale = Math.max(screenWidth / image.width, screenHeight / image.height);
@@ -725,15 +724,15 @@ function drawImageInPhoneReal(
   // iPhone screen has rounded corners - need proper clipping radius
   const screenCornerRadius = 37;
 
-  // Fill screen background with WHITE on full rectangle (covers corners so background doesn't bleed through)
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
-
-  // Clip image to rounded corners
+  // Clip to rounded screen area
   ctx.save();
   ctx.beginPath();
   ctx.roundRect(screenX, screenY, screenWidth, screenHeight, screenCornerRadius);
   ctx.clip();
+
+  // Fill screen background with WHITE (inside clip so it doesn't poke out of frame)
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
   
   // Calculate scaled image dimensions
   // Base scale covers the screen (Math.max = cover mode, no white bars)
