@@ -28,6 +28,7 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
   const [imageTransform, setImageTransform] = useState<ImageTransform>({ scale: 1, x: 0, y: 0 });
   const [isTransforming, setIsTransforming] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  const [screenBgColor, setScreenBgColor] = useState<"#ffffff" | "#000000">("#000000");
   const [showPaywall, setShowPaywall] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -127,9 +128,11 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
   // Render canvas when image or template changes
   useEffect(() => {
     if (image && canvasRef.current && selectedTemplate) {
-      // If a device frame is selected, inject the active background colors into the template
+      // If a device frame is selected, inject the active background and screen bg color
       const renderTemplate = selectedTemplate.type === "device" && activeBackground
-        ? { ...selectedTemplate, config: { ...selectedTemplate.config, _background: activeBackground } }
+        ? { ...selectedTemplate, config: { ...selectedTemplate.config, _background: activeBackground, _screenBgColor: screenBgColor } }
+        : selectedTemplate.type === "device"
+        ? { ...selectedTemplate, config: { ...selectedTemplate.config, _screenBgColor: screenBgColor } }
         : selectedTemplate;
 
       applyTemplate(canvasRef.current, image, renderTemplate, customWatermark, imageTransform, isPaid).then(() => {
@@ -141,7 +144,7 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
         console.error('Failed to apply template:', err);
       });
     }
-  }, [image, selectedTemplate, activeBackground, customWatermark, imageTransform, isPaid]);
+  }, [image, selectedTemplate, activeBackground, customWatermark, imageTransform, isPaid, screenBgColor]);
 
   // Reset transform and cached screen dimensions when template changes
   useEffect(() => {
@@ -185,7 +188,9 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
       setTimeout(() => {
         if (canvas && image && selectedTemplate) {
           const renderTemplate = selectedTemplate.type === "device" && activeBackground
-            ? { ...selectedTemplate, config: { ...selectedTemplate.config, _background: activeBackground } }
+            ? { ...selectedTemplate, config: { ...selectedTemplate.config, _background: activeBackground, _screenBgColor: screenBgColor } }
+            : selectedTemplate.type === "device"
+            ? { ...selectedTemplate, config: { ...selectedTemplate.config, _screenBgColor: screenBgColor } }
             : selectedTemplate;
           applyTemplate(canvas, image, renderTemplate, customWatermark, transform, isPaid).catch(err => {
             console.error('Failed to apply template:', err);
@@ -452,6 +457,21 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
                         >
                           Fill All
                         </button>
+                      </div>
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-[10px] text-gray-400">Screen</span>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => setScreenBgColor("#000000")}
+                            className={`w-5 h-5 rounded border-2 bg-black ${screenBgColor === "#000000" ? "border-purple-500" : "border-gray-600"}`}
+                            title="Black screen background"
+                          />
+                          <button
+                            onClick={() => setScreenBgColor("#ffffff")}
+                            className={`w-5 h-5 rounded border-2 bg-white ${screenBgColor === "#ffffff" ? "border-purple-500" : "border-gray-600"}`}
+                            title="White screen background"
+                          />
+                        </div>
                       </div>
                       <div className="flex flex-col items-center gap-2 bg-gray-900/50 rounded-lg p-3">
                         <span className="text-xs text-gray-400">Zoom</span>

@@ -71,7 +71,8 @@ export async function applyTemplate(
   if (!ctx) return;
 
   const padding = 100;
-  
+  const screenBg: string = template.config._screenBgColor || "#000000";
+
   // Set canvas size based on template type
   if (template.type === "device") {
     if (template.config.device === "phone") {
@@ -115,7 +116,7 @@ export async function applyTemplate(
             height: screenHeight
           };
           
-          drawImageInPhoneReal(ctx, image, screenX, screenY, screenWidth, screenHeight, imageTransform, orientation);
+          drawImageInPhoneReal(ctx, image, screenX, screenY, screenWidth, screenHeight, imageTransform, orientation, screenBg);
           
           // Draw device frame on top
           ctx.drawImage(frameImage, padding, padding, canvasWidth, canvasHeight);
@@ -154,7 +155,7 @@ export async function applyTemplate(
           };
           
           // Draw user image first (with rotated clipping)
-          drawImageInPhoneReal(ctx, image, screenX, screenY, screenWidth, screenHeight, imageTransform, orientation);
+          drawImageInPhoneReal(ctx, image, screenX, screenY, screenWidth, screenHeight, imageTransform, orientation, screenBg);
           
           // Draw device frame rotated 90° clockwise
           ctx.save();
@@ -195,7 +196,7 @@ export async function applyTemplate(
         drawPhoneFrame(ctx, canvas.width / 2, canvas.height / 2, phoneWidth, phoneHeight, orientation);
         
         // Draw image inside phone with transform
-        drawImageInPhone(ctx, image, canvas.width / 2, canvas.height / 2, phoneWidth, phoneHeight, imageTransform, orientation);
+        drawImageInPhone(ctx, image, canvas.width / 2, canvas.height / 2, phoneWidth, phoneHeight, imageTransform, orientation, screenBg);
       }
     } else if (template.config.device === "ipad") {
       // iPad Pro mockup - landscape orientation, using PNG frame
@@ -230,7 +231,7 @@ export async function applyTemplate(
         };
         
         // Draw user image in screen area
-        drawImageInDeviceScreen(ctx, image, screenX, screenY, screenWidth, screenHeight, imageTransform);
+        drawImageInDeviceScreen(ctx, image, screenX, screenY, screenWidth, screenHeight, imageTransform, screenBg);
         
         // Draw device frame on top
         ctx.drawImage(frameImage, padding, padding, canvasWidth, canvasHeight);
@@ -252,7 +253,7 @@ export async function applyTemplate(
         // Simple fallback rendering
         const x = padding;
         const y = padding;
-        ctx.fillStyle = "#000000";
+        ctx.fillStyle = screenBg;
         ctx.fillRect(x, y, ipadWidth, ipadHeight);
         
         const baseScale = Math.max(ipadWidth / image.width, ipadHeight / image.height);
@@ -305,8 +306,7 @@ export async function applyTemplate(
       ctx.beginPath();
       ctx.roundRect(screenX, screenY, macbookScreenW, macbookScreenH, 2);
       ctx.clip();
-      // Black background
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = screenBg;
       ctx.fillRect(screenX, screenY, macbookScreenW, macbookScreenH);
       ctx.drawImage(image, imageX, imageY, scaledWidth, scaledHeight);
       ctx.restore();
@@ -344,7 +344,7 @@ export async function applyTemplate(
       ctx.beginPath();
       ctx.rect(windowX, windowY + 40, browserWidth, browserHeight);
       ctx.clip();
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = screenBg;
       ctx.fillRect(windowX, windowY + 40, browserWidth, browserHeight);
       ctx.drawImage(image, imageX, imageY, scaledWidth, scaledHeight);
       ctx.restore();
@@ -678,7 +678,8 @@ function drawImageInDeviceScreen(
   screenY: number,
   screenWidth: number,
   screenHeight: number,
-  transform: ImageTransform
+  transform: ImageTransform,
+  screenBg: string = "#000000"
 ) {
   // Clip to rectangular screen area (the device frame PNG provides the actual rounded corners on top)
   ctx.save();
@@ -686,8 +687,8 @@ function drawImageInDeviceScreen(
   ctx.rect(screenX, screenY, screenWidth, screenHeight);
   ctx.clip();
 
-  // Fill screen background with WHITE
-  ctx.fillStyle = "#ffffff";
+  // Fill screen background
+  ctx.fillStyle = screenBg;
   ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
 
   // Calculate scaled image dimensions
@@ -719,7 +720,8 @@ function drawImageInPhoneReal(
   screenWidth: number,
   screenHeight: number,
   transform: ImageTransform,
-  orientation: "portrait" | "landscape" = "portrait"
+  orientation: "portrait" | "landscape" = "portrait",
+  screenBg: string = "#000000"
 ) {
   // iPhone screen has rounded corners - need proper clipping radius
   const screenCornerRadius = 37;
@@ -730,8 +732,8 @@ function drawImageInPhoneReal(
   ctx.roundRect(screenX, screenY, screenWidth, screenHeight, screenCornerRadius);
   ctx.clip();
 
-  // Fill screen background with WHITE (inside clip so it doesn't poke out of frame)
-  ctx.fillStyle = "#ffffff";
+  // Fill screen background (inside clip so it doesn't poke out of frame)
+  ctx.fillStyle = screenBg;
   ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
   
   // Calculate scaled image dimensions
@@ -763,30 +765,31 @@ function drawImageInPhone(
   phoneWidth: number,
   phoneHeight: number,
   transform: ImageTransform,
-  orientation: "portrait" | "landscape" = "portrait"
+  orientation: "portrait" | "landscape" = "portrait",
+  screenBg: string = "#000000"
 ) {
   const x = centerX - phoneWidth / 2;
   const y = centerY - phoneHeight / 2;
   const bezelWidth = 8; // Match the new thinner bezel
-  
+
   let screenX, screenY, screenWidth, screenHeight;
-  
+
   // Screen area with thin bezels (just accounting for the physical bezel)
   screenX = x;
   screenY = y;
   screenWidth = phoneWidth;
   screenHeight = phoneHeight;
-  
+
   const cornerRadius = 37;
-  
+
   // Create clipping path for screen area with rounded corners
   ctx.save();
   ctx.beginPath();
   ctx.roundRect(screenX, screenY, screenWidth, screenHeight, cornerRadius);
   ctx.clip();
-  
-  // Fill screen background with WHITE
-  ctx.fillStyle = "#ffffff";
+
+  // Fill screen background
+  ctx.fillStyle = screenBg;
   ctx.fillRect(screenX, screenY, screenWidth, screenHeight);
   
   // Calculate scaled image dimensions (cover mode - no white bars)
