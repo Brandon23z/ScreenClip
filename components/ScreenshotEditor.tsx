@@ -32,6 +32,7 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const transformStartRef = useRef<{ x: number; y: number } | null>(null);
+  const realScreenDimsRef = useRef<{ width: number; height: number } | null>(null);
 
   // Check payment status on mount
   useEffect(() => {
@@ -130,17 +131,23 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
       const renderTemplate = selectedTemplate.type === "device" && activeBackground
         ? { ...selectedTemplate, config: { ...selectedTemplate.config, _background: activeBackground } }
         : selectedTemplate;
-      
-      applyTemplate(canvasRef.current, image, renderTemplate, customWatermark, imageTransform, isPaid).catch(err => {
+
+      applyTemplate(canvasRef.current, image, renderTemplate, customWatermark, imageTransform, isPaid).then(() => {
+        // Capture real screen dimensions set by applyTemplate for fill button calculations
+        if (renderTemplate.config._realScreenDimensions) {
+          realScreenDimsRef.current = renderTemplate.config._realScreenDimensions;
+        }
+      }).catch(err => {
         console.error('Failed to apply template:', err);
       });
     }
   }, [image, selectedTemplate, activeBackground, customWatermark, imageTransform, isPaid]);
 
-  // Reset transform when template changes
+  // Reset transform and cached screen dimensions when template changes
   useEffect(() => {
     if (selectedTemplate?.config?.device) {
       setImageTransform({ scale: 1, x: 0, y: 0 });
+      realScreenDimsRef.current = null;
     }
   }, [selectedTemplate?.id]);
 
@@ -157,9 +164,9 @@ export default function ScreenshotEditor({ onBack }: { onBack: () => void }) {
   // Get screen dimensions for the current device template
   const getScreenDimensions = () => {
     if (!selectedTemplate?.config?.device) return { width: 0, height: 0 };
-    if (selectedTemplate.config._realScreenDimensions) {
-      return selectedTemplate.config._realScreenDimensions;
-    }
+    // Use real dimensions captured from the last render (accurate for all orientations)
+    if (realScreenDimsRef.current) return realScreenDimsRef.current;
+    // Fallback to hardcoded dimensions
     if (selectedTemplate.config.device === "phone") {
       const orientation = selectedTemplate.config.orientation || "portrait";
       return { width: orientation === "portrait" ? 380 : 780, height: orientation === "portrait" ? 780 : 380 };
